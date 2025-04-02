@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.cool-underline {
+  position: relative;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.cool-underline::after {
+  content: "";
+  height: 10px;
+  transform: skew(-21deg);
+  background-color: #dc008344;
+  display: block;
+  margin: 0 auto;
+  border-radius: 50px;
+  position: absolute;
+  left: -8px;
+  width: 0;
+  bottom: 10px;
+  z-index: -1;
+  transition: all 0.5s ease-in-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.cool-underline.showline::after {
+  width: calc(100% + 16px);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+form input,
+form select,
+form textarea {
+  @apply border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm;
 }
+
+form input,
+form textarea {
+  @apply w-full block p-2;
+}
+
+form label {
+  @apply mb-4 block p-1;
+}
+
+form label span , span.label{
+  @apply text-gray-600 text-xs uppercase font-bold;
+}
+
