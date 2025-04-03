@@ -1,10 +1,10 @@
-'use client'
+"use client";
 import Link from "next/link";
 import React from "react";
 
 const Rightnav = ({ email }: { email: string }) => {
-
-  const hasLoggedOut=location.href.includes('logged-out')
+  const hasLoggedOut =
+    window && window.location.href.includes("logged-out");
 
   if (email && !hasLoggedOut) {
     return (
@@ -19,8 +19,7 @@ const Rightnav = ({ email }: { email: string }) => {
         <a href={"/api/logout"}>Logout</a>
       </nav>
     );
-  }
- else {
+  } else {
     return (
       <nav className="flex gap-4 items-center">
         <Link href={"/api/auth"}>Sign In</Link>

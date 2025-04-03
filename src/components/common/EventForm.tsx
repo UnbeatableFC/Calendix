@@ -1,6 +1,7 @@
 "use client";
 import TimeSelect from "@/components/common/TimeSelect";
 import { BookingTimes, WeekdayName } from "@/models/EventType";
+import axios from "axios";
 import clsx from "clsx";
 import { useState } from "react";
 
@@ -35,8 +36,23 @@ const EventForm = () => {
       return newBookingTimes;
     });
   }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const response = await axios.post("/api/event-types", {
+      title,
+      description,
+      length,
+      bookingTimes,
+    });
+    console.log(response);
+  }
   return (
-    <form action="" className=" p-2 bg-gray-200 rounded-lg">
+    <form
+      action=""
+      onSubmit={handleSubmit}
+      className=" p-2 bg-gray-200 rounded-lg"
+    >
       <div>Create New Event Type</div>
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -132,7 +148,10 @@ const EventForm = () => {
       </div>
 
       <div className="flex justify-center">
-        <button className="bg-blue-600 text-white py-2 px-8 rounded-full">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-2 px-8 rounded-full"
+        >
           Save
         </button>
       </div>
