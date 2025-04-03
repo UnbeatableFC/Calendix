@@ -21,8 +21,8 @@ const EventForm = () => {
 
   function handleBookingTimeChange(
     day: WeekdayName,
-    val: string,
-    fromOrTo: "from" | "to"
+    val: string | boolean,
+    prop: "from" | "to" | "active"
   ) {
     setBookingTimes((oldBookingTimes) => {
       const newBookingTimes: BookingTimes = {
@@ -31,7 +31,7 @@ const EventForm = () => {
       if (!newBookingTimes[day]) {
         newBookingTimes[day] = { from: "00:00", to: "00:00" };
       }
-      newBookingTimes[day][fromOrTo] = val;
+      newBookingTimes[day][prop] = val;
       return newBookingTimes;
     });
   }
@@ -76,19 +76,31 @@ const EventForm = () => {
           : <br />
           <div className="">
             {weekdaysNames.map((day) => {
-              const from = bookingTimes?.[day]?.from || "00:00";
-              const to = bookingTimes?.[day]?.to || "00:00";
+              // const from = bookingTimes?.[day]?.from;
+              // const to = bookingTimes?.[day]?.to;
 
-              const active = from && to && from !== to;
+              const active = bookingTimes?.[day]?.active;
               return (
                 <div
                   className="grid grid-cols-2 gap-2 items-center"
                   key={day}
                 >
-                  <div>
-                    <input type="checkbox" className="" />
+                  <label className="flex gap-1 !mb-0">
+                    <input
+                      type="checkbox"
+                      className=""
+                      value={1}
+                      checked={bookingTimes?.[day]?.active}
+                      onChange={(e) =>
+                        handleBookingTimeChange(
+                          day,
+                          e.target.checked,
+                          "active"
+                        )
+                      }
+                    />
                     {day.toUpperCase()}
-                  </div>
+                  </label>
 
                   <div
                     className={clsx(
