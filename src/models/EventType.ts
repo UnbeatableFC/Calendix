@@ -3,11 +3,13 @@ import { model, models, Schema } from "mongoose";
 const FromToSchema = new Schema({
   from: String,
   to: String,
+  
 });
 
-type FromTo = {
+export type FromTo = {
   from: string;
   to: string;
+  active: boolean
 };
 
 const BookingSchema = new Schema<Record<WeekdayName, FromTo>>({
@@ -42,12 +44,14 @@ export type WeekdayName =
   | "saturday"
   | "sunday";
 
-type EventType = {
+export type BookingTimes = {} | Record<WeekdayName, FromTo>;
+
+export type EventType = {
   email: string;
   title: string;
   description: string;
   length: number;
-  bookingTimes: Record<WeekdayName, FromTo>;
+  bookingTimes: BookingTimes;
 };
 
 export const EventTypeModel =

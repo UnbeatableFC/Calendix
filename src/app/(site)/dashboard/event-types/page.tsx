@@ -1,9 +1,11 @@
 "use server";
 import DashboardNav from "@/components/common/DashboardNav";
-import EventForm from "@/components/common/EventForm";
+
 import { session } from "@/libs/session";
 import { EventTypeModel } from "@/models/EventType";
+import { PlusIcon } from "lucide-react";
 import { connect } from "mongoose";
+import Link from "next/link";
 import React from "react";
 
 const EventTypesPage = async () => {
@@ -19,7 +21,13 @@ const EventTypesPage = async () => {
     <div>
       <DashboardNav />
       {JSON.stringify(eventTypes)}
-      <EventForm />
+      <Link
+        className="btn-gray"
+        href="/dashboard/event-types/new"
+      >
+        <PlusIcon size={16} />
+        New Event Type
+      </Link>
     </div>
   );
 };
