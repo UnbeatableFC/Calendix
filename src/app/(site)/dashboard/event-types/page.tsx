@@ -20,11 +20,18 @@ const EventTypesPage = async () => {
   return (
     <div>
       <DashboardNav />
-      {JSON.stringify(eventTypes)}
-      <Link
-        className="btn-gray"
-        href="/dashboard/event-types/new"
-      >
+      <div className="border border-b-0 rounded-xl my-4 overflow-hidden">
+        {eventTypes.map((eventType, index) => (
+          <Link
+            href={"/dashboard/event-types/edit/" + eventType._id}
+            key={index}
+            className="block border-b p-2"
+          >
+            {eventType.title}
+          </Link>
+        ))}
+      </div>
+      <Link className="btn-gray" href="/dashboard/event-types/new">
         <PlusIcon size={16} />
         New Event Type
       </Link>

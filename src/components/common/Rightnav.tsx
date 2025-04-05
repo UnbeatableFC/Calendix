@@ -4,7 +4,7 @@ import React from "react";
 
 const Rightnav = ({ email }: { email: string }) => {
   const hasLoggedOut =
-    window && window.location.href.includes("logged-out");
+   typeof window !== "undefined" &&  window && window.location.href.includes("logged-out");
 
   if (email && !hasLoggedOut) {
     return (
