@@ -7,6 +7,7 @@ import React from "react";
 const DashboardNav = () => {
   const pathname = usePathname();
   const isEventTypesPage = pathname.includes("event-types");
+  const isBookedEventsPage = pathname.includes("booked-events");
 
   return (
     <div>
@@ -14,11 +15,22 @@ const DashboardNav = () => {
         <Link
           className={clsx(
             "rounded-full px-4 py-2",
-            isEventTypesPage
-              ? "bg-gray-200"
-              : "bg-blue-600 text-white"
+            pathname === "/dashboard"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200"
           )}
           href={"/dashboard"}
+        >
+          Profile
+        </Link>
+        <Link
+          className={clsx(
+            "rounded-full px-4 py-2",
+            isBookedEventsPage
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 "
+          )}
+          href="/dashboard/booked-events"
         >
           Booked Events
         </Link>

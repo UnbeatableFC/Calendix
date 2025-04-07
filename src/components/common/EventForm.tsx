@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { EventType } from "@/models/EventType";
 
 import { FormEvent, useState } from "react";
+import { Trash2 } from "lucide-react";
+import EventDeleteButton from "./EventDeleteButton";
 
 const weekdaysNames: WeekdayName[] = [
   "monday",
@@ -51,14 +53,16 @@ const EventForm = ({ doc }: { doc?: EventType }) => {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const id = doc?._id
+    const id = doc?._id;
     const request = id ? axios.put : axios.post;
-    const data = {title, description, length, bookingTimes};
+    const data = { title, description, length, bookingTimes };
     const response = await request("/api/event-types", {
-      ...data, id
+      ...data,
+      id,
     });
     if (response.data) {
       router.push("/dashboard/event-types");
+      router.refresh();
     }
   }
   return (
@@ -67,7 +71,11 @@ const EventForm = ({ doc }: { doc?: EventType }) => {
       onSubmit={handleSubmit}
       className=" p-2 bg-gray-200 rounded-lg"
     >
-      <div>Create New Event Type</div>
+      {doc && (
+        <p className="text-sm my-2 text-gray-500">
+          {process.env.NEXT_PUBLIC_URL}/username/{doc.uri}
+        </p>
+      )}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label>
@@ -161,13 +169,14 @@ const EventForm = ({ doc }: { doc?: EventType }) => {
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-4">
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-8 rounded-full"
+          className="bg-blue-600 text-white py-2 px-8 rounded-full cursor-pointer"
         >
           Save
         </button>
+        {doc && <EventDeleteButton id={doc._id as string} />}
       </div>
     </form>
   );

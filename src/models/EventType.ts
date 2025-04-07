@@ -28,6 +28,7 @@ const EventTypeSchema = new Schema<EventType>(
     description: String,
     length: Number,
     bookingTimes: BookingSchema,
+    uri: { type: String },
   },
   {
     timestamps: true,
@@ -46,13 +47,16 @@ export type WeekdayName =
 export type BookingTimes = object | { [key in WeekdayName]: FromTo };
 
 export interface EventType {
-  email: string; // Ensure 'string' is used as a type
+  email: string;
+  uri: string;
   title: string;
   description: string;
   length: number;
   bookingTimes: BookingTimes;
   _id?: string;
-};
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export const EventTypeModel =
   models?.EventType || model<EventType>("EventType", EventTypeSchema);

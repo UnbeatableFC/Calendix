@@ -16,6 +16,7 @@ const EditEventTypePage = async ({ params }: PageProps) => {
   if (!eventTypeDoc) {
     return "404";
   }
+  console.log(eventTypeDoc);
   return (
     <div>
       <EventForm doc={JSON.parse(JSON.stringify(eventTypeDoc))} />

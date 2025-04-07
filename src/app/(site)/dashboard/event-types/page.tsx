@@ -22,13 +22,16 @@ const EventTypesPage = async () => {
       <DashboardNav />
       <div className="border border-b-0 rounded-xl my-4 overflow-hidden">
         {eventTypes.map((eventType, index) => (
-          <Link
-            href={"/dashboard/event-types/edit/" + eventType._id}
-            key={index}
-            className="block border-b p-2"
-          >
-            {eventType.title}
-          </Link>
+          <div key={index} className="block border-b p-2">
+            <Link
+              href={"/dashboard/event-types/edit/" + eventType._id}
+            >
+              {eventType.title}
+            </Link>
+            <span className="text-gray-400 ml-4 text-sm">
+              {process.env.NEXT_PUBLIC_URL}/username/{eventType.uri}
+            </span>
+          </div>
         ))}
       </div>
       <Link className="btn-gray" href="/dashboard/event-types/new">
