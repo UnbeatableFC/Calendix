@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest) {
   const body = await req.json();
   const { username } = body;
   const email = await session().get("email");
-  if (email) {
+  if (email && username) {
     const profileDoc = await ProfileModel.findOne({ email });
     if (profileDoc) {
       profileDoc.username = username;
@@ -21,6 +21,9 @@ export async function PUT(req: NextRequest) {
     } else {
       await ProfileModel.create({ email, username });
     }
+    return Response.json(true);
+  } else {
+    
+    return Response.json(false);
   }
-  return Response.json(true);
 }

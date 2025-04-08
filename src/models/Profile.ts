@@ -1,6 +1,6 @@
 import { model, models, Schema } from "mongoose";
 
-interface Profile extends Document {
+interface Profile {
   email: string;
   username: string;
 }
