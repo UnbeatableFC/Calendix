@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const DashboardNav = () => {
+const DashboardNav = ({ username }: { username: string }) => {
   const pathname = usePathname();
   const isEventTypesPage = pathname.includes("event-types");
   const isBookedEventsPage = pathname.includes("booked-events");
@@ -23,28 +23,32 @@ const DashboardNav = () => {
         >
           Profile
         </Link>
-        <Link
-          className={clsx(
-            "rounded-full px-4 py-2",
-            isBookedEventsPage
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 "
-          )}
-          href="/dashboard/booked-events"
-        >
-          Booked Events
-        </Link>
-        <Link
-          className={
-            "rounded-full px-4 py-2 " +
-            (isEventTypesPage
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200")
-          }
-          href={"/dashboard/event-types"}
-        >
-          Event Types
-        </Link>
+        {username && (
+          <>
+            <Link
+              className={clsx(
+                "rounded-full px-4 py-2",
+                isBookedEventsPage
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 "
+              )}
+              href="/dashboard/booked-events"
+            >
+              Booked Events
+            </Link>
+            <Link
+              className={
+                "rounded-full px-4 py-2 " +
+                (isEventTypesPage
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200")
+              }
+              href={"/dashboard/event-types"}
+            >
+              Event Types
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

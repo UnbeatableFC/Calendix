@@ -1,8 +1,7 @@
 "use server";
-import DashboardNav from "@/components/common/DashboardNav";
-
 import { session } from "@/libs/session";
 import { EventTypeModel } from "@/models/EventType";
+import { ProfileModel } from "@/models/Profile";
 import { PlusIcon } from "lucide-react";
 import { connect } from "mongoose";
 import Link from "next/link";
@@ -17,9 +16,9 @@ const EventTypesPage = async () => {
   await connect(process.env.MONGODB_URI);
   const email = await session().get("email");
   const eventTypes = await EventTypeModel.find({ email });
+  const profile = await ProfileModel.findOne({ email });
   return (
     <div>
-      <DashboardNav />
       <div className="border border-b-0 rounded-xl my-4 overflow-hidden">
         {eventTypes.map((eventType, index) => (
           <div key={index} className="block border-b p-2">
@@ -29,7 +28,8 @@ const EventTypesPage = async () => {
               {eventType.title}
             </Link>
             <span className="text-gray-400 ml-4 text-sm">
-              {process.env.NEXT_PUBLIC_URL}/username/{eventType.uri}
+              {process.env.NEXT_PUBLIC_URL}/{profile.username}/
+              {eventType.uri}
             </span>
           </div>
         ))}

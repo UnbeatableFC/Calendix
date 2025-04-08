@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { EventType } from "@/models/EventType";
 
 import { FormEvent, useState } from "react";
-import { Trash2 } from "lucide-react";
 import EventDeleteButton from "./EventDeleteButton";
 
 const weekdaysNames: WeekdayName[] = [
@@ -19,7 +18,13 @@ const weekdaysNames: WeekdayName[] = [
   "saturday",
   "sunday",
 ];
-const EventForm = ({ doc }: { doc?: EventType }) => {
+const EventForm = ({
+  doc,
+  username = "",
+}: {
+  doc?: EventType;
+  username?: string;
+}) => {
   const [title, setTitle] = useState<string>(doc?.title || "");
   const [description, setDescription] = useState<string>(
     doc?.description || ""
@@ -69,11 +74,11 @@ const EventForm = ({ doc }: { doc?: EventType }) => {
     <form
       action=""
       onSubmit={handleSubmit}
-      className=" p-2 bg-gray-200 rounded-lg"
+      className=" p-2 mt-4 bg-gray-200 rounded-lg"
     >
       {doc && (
         <p className="text-sm my-2 text-gray-500">
-          {process.env.NEXT_PUBLIC_URL}/username/{doc.uri}
+          {process.env.NEXT_PUBLIC_URL}/{username}/{doc.uri}
         </p>
       )}
       <div className="grid grid-cols-2 gap-4">
