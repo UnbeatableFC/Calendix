@@ -3,6 +3,7 @@ import { model, models, Schema } from "mongoose";
 const FromToSchema = new Schema({
   from: String,
   to: String,
+  active: Boolean,
 });
 
 export type FromTo = {
