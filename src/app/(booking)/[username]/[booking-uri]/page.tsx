@@ -15,14 +15,14 @@ type PageProps = {
 const BookingPage = async (props: PageProps) => {
   await connect(process.env.MONGODB_URI as string);
   const profileDoc = await ProfileModel.findOne({
-    username: props.params.username,
+    username: await props.params?.username,
   });
   if (!profileDoc) {
     return 404;
   }
   const etDoc = await EventTypeModel.findOne({
     email: profileDoc.email,
-    uri: props.params?.["booking-uri"],
+    uri: await props.params?.["booking-uri"],
   });
   if (!etDoc) {
     return 404;
@@ -35,7 +35,9 @@ const BookingPage = async (props: PageProps) => {
       <div className=" w-full">
         <div className="  flex  p-8 shadow-md rounded-lg max-w-4xl mx-auto overflow-hidden">
           <div className="bg-blue-100/60 p-8 gap-1.5 max-w-80 text-gray-800 flex flex-col">
-            <h1 className="text-2xl font-bold mb-2 border-b border-black/10 pb-2">{etDoc.title}</h1>
+            <h1 className="text-2xl font-bold mb-2 border-b border-black/10 pb-2">
+              {etDoc.title}
+            </h1>
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 <div>
@@ -52,7 +54,11 @@ const BookingPage = async (props: PageProps) => {
             </div>
           </div>
           <div className="bg-white/80 backdrop-blur-lg grow p-8">
-            <TimePicker bookingTimes = {etDoc.bookingTimes} />
+            <TimePicker
+              bookingTimes={JSON.parse(
+                JSON.stringify(etDoc.bookingTimes)
+              )}
+            />
           </div>
         </div>
       </div>
