@@ -15,14 +15,14 @@ type PageProps = {
 const BookingPage = async (props: PageProps) => {
   await connect(process.env.MONGODB_URI as string);
   const profileDoc = await ProfileModel.findOne({
-    username: await props.params?.username,
+    username: props.params?.username,
   });
   if (!profileDoc) {
     return 404;
   }
   const etDoc = await EventTypeModel.findOne({
     email: profileDoc.email,
-    uri: await props.params?.["booking-uri"],
+    uri: props.params?.["booking-uri"],
   });
   if (!etDoc) {
     return 404;
