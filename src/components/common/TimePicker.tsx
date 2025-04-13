@@ -1,5 +1,5 @@
 "use client";
-import { WeekdayName } from "@/models/EventType";
+import { FromTo, WeekdayName } from "@/models/EventType";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { weekdaysShortNames, BookingTimes } from "@/libs/shared";
 import { useState } from "react";
@@ -7,6 +7,8 @@ import {
   addDays,
   addMonths,
   format,
+  isBefore,
+  isEqual,
   isFuture,
   isLastDayOfMonth,
   isToday,
@@ -46,6 +48,8 @@ const TimePicker = ({
   const [activeYear, setActiveYear] = useState(
     activeCalendarDate.getFullYear()
   );
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+
   const firstDayOfActiveMonth = new Date(
     activeYear,
     activeMonthIndex,
@@ -64,15 +68,32 @@ const TimePicker = ({
     emptyDaysCount
   );
 
-  const daysNumber = [firstDayOfActiveMonth.getDate()];
+  const daysNumber = [firstDayOfActiveMonth];
   do {
     const lastAddedDay = daysNumber[daysNumber.length - 1];
-    daysNumber.push(addDays(lastAddedDay, 1).getDate());
+    daysNumber.push(addDays(lastAddedDay, 1));
   } while (!isLastDayOfMonth(daysNumber[daysNumber.length - 1]));
+
+  let selectedDayConfig = null as FromTo | null;
+  const bookingHours = []
+  if (selectedDay) {
+    const weekdayNameIndex = format(
+      selectedDay,
+      "EEEE"
+    ).toLowerCase() as WeekdayName;
+    selectedDayConfig = bookingTimes?.[weekdayNameIndex];
+    let a = selectedDayConfig?.from 
+    do {
+      bookingHours.push(a)
+    } while (isBefore(a, selectedDayConfig?.to))
+  }
+  function handleDayClicked(day: Date) {
+    setSelectedDay(day);
+  }
 
   return (
     <div className="flex gap-4">
-      <div className="">
+      <div className="grow">
         <div className="flex items-center">
           <span className="grow">
             {format(firstDayOfActiveMonth, "MMMM")} {activeYear}{" "}
@@ -115,12 +136,17 @@ const TimePicker = ({
                 className="text-center text-sm text-gray-400 font-bold "
               >
                 <button
+                  disabled={!canBeBooked}
+                  onClick={() => handleDayClicked(day)}
                   className={clsx(
-                    " w-8 h-8 rounded-full inline-flexflex items-center justify-center" +
-                      canBeBooked
-                      ? "bg-blue-200 text-blue-700"
+                    "w-8 h-8 inline-flex  rounded-full items-center justify-center ",
+                    canBeBooked
+                      ? "bg-blue-100 text-blue-700 cursor-pointer"
                       : "",
-                    isToday(day) && " bg-gray-200 text-gray-600"
+                    selectedDay && isEqual(day, selectedDay)
+                      ? "bg-blue-500 text-white cursor-pointer"
+                      : "",
+                    isToday(day) ? "bg-gray-200 text-gray-500" : ""
                   )}
                 >
                   {format(day, "d")}
@@ -130,7 +156,9 @@ const TimePicker = ({
           })}
         </div>
       </div>
-      <div className="border border-black">Times</div>
+      <div className="border border-black">
+        <pre className="text-sm">{JSON.stringify(selectedDayConfig, null, 2)}</pre>
+      </div>
     </div>
   );
 };
