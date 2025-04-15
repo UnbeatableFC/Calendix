@@ -1,7 +1,6 @@
 import TimePicker from "@/components/common/TimePicker";
 import { EventTypeModel } from "@/models/EventType";
 import { ProfileModel } from "@/models/Profile";
-import { Clock, Info } from "lucide-react";
 import { connect } from "mongoose";
 import React from "react";
 
@@ -28,41 +27,12 @@ const BookingPage = async (props: PageProps) => {
     return 404;
   }
   return (
-    <div
-      className="h-screen flex items-center  bg-cover"
-      style={{ backgroundImage: "url('/background.jpg')" }}
-    >
-      <div className=" w-full">
-        <div className="  flex  p-8 shadow-md rounded-lg max-w-4xl mx-auto overflow-hidden">
-          <div className="bg-blue-100/60 p-8 gap-1.5 max-w-80 text-gray-800 flex flex-col">
-            <h1 className="text-2xl font-bold mb-2 border-b border-black/10 pb-2">
-              {etDoc.title}
-            </h1>
-            <div className="flex flex-col gap-3">
-              <div className="flex gap-2">
-                <div>
-                  <Clock />
-                </div>
-                <div>{etDoc.length} minutes</div>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <div>
-                  <Info />
-                </div>
-                <div className="">{etDoc.description}</div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/80 backdrop-blur-lg grow p-8">
-            <TimePicker
-              bookingTimes={JSON.parse(
-                JSON.stringify(etDoc.bookingTimes)
-              )}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <TimePicker
+      username={props.params.username}
+      meetingUri={etDoc.uri}
+      length={etDoc.length}
+      bookingTimes={JSON.parse(JSON.stringify(etDoc.bookingTimes))}
+    />
   );
 };
 

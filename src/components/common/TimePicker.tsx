@@ -1,10 +1,11 @@
 "use client";
-import { FromTo, WeekdayName } from "@/models/EventType";
+import { WeekdayName } from "@/models/EventType";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { weekdaysShortNames, BookingTimes } from "@/libs/shared";
 import { useState } from "react";
 import {
   addDays,
+  addMinutes,
   addMonths,
   format,
   isBefore,
@@ -15,11 +16,18 @@ import {
   subMonths,
 } from "date-fns";
 import clsx from "clsx";
+import Link from "next/link";
 
 const TimePicker = ({
   bookingTimes,
+  length,
+  username,
+  meetingUri,
 }: {
   bookingTimes: BookingTimes;
+  length: number;
+  username: string;
+  meetingUri: string;
 }) => {
   const currentDate = new Date();
 
@@ -74,18 +82,31 @@ const TimePicker = ({
     daysNumber.push(addDays(lastAddedDay, 1));
   } while (!isLastDayOfMonth(daysNumber[daysNumber.length - 1]));
 
-  let selectedDayConfig = null as FromTo | null;
-  const bookingHours = []
+  let selectedDayConfig = null;
+  const bookingHours = [];
   if (selectedDay) {
     const weekdayNameIndex = format(
       selectedDay,
       "EEEE"
     ).toLowerCase() as WeekdayName;
     selectedDayConfig = bookingTimes?.[weekdayNameIndex];
-    let a = selectedDayConfig?.from 
-    do {
-      bookingHours.push(a)
-    } while (isBefore(a, selectedDayConfig?.to))
+    if (selectedDayConfig) {
+      const [hoursFrom, minutesFrom] =
+        selectedDayConfig.from.split(":");
+      const selectedDayFrom = new Date(selectedDay);
+      selectedDayFrom.setHours(parseInt(hoursFrom));
+      selectedDayFrom.setMinutes(parseInt(minutesFrom));
+
+      const [hoursTo, minutesTo] = selectedDayConfig.to.split(":");
+      const selectedDayTo = new Date(selectedDay);
+      selectedDayTo.setHours(parseInt(hoursTo));
+      selectedDayTo.setMinutes(parseInt(minutesTo));
+      let a = selectedDayFrom;
+      do {
+        bookingHours.push(a);
+        a = addMinutes(a, 30);
+      } while (isBefore(addMinutes(a, length), selectedDayTo));
+    }
   }
   function handleDayClicked(day: Date) {
     setSelectedDay(day);
@@ -93,9 +114,9 @@ const TimePicker = ({
 
   return (
     <div className="flex gap-4">
-      <div className="grow">
+      <div className="p-8">
         <div className="flex items-center">
-          <span className="grow">
+          <span className="grow text-center">
             {format(firstDayOfActiveMonth, "MMMM")} {activeYear}{" "}
           </span>
           <button onClick={prevMonth} title="Previous Month">
@@ -156,9 +177,24 @@ const TimePicker = ({
           })}
         </div>
       </div>
-      <div className="border border-black">
-        <pre className="text-sm">{JSON.stringify(selectedDayConfig, null, 2)}</pre>
-      </div>
+      {selectedDay && (
+        <div className=" mr-2 pt-8 pb-4 pl-2 pr-4 overflow-y-scroll">
+          <p className="">{format(selectedDay, "EEEE, MMMM d")}</p>
+          <div className="grid gap-1 mt-2 max-h-56">
+            {bookingHours.map((bookingTime, index) => (
+              <div key={index}>
+                <Link
+                  href={`/${username}/${meetingUri}/${bookingTime.toISOString()}`}
+                  className="w-full block border-2 border-blue-600 rounded-lg text-blue-600 font-semibold cursor-pointer text-sm text-center"
+                >
+                  {format(bookingTime, "HH:mm a")}
+                </Link>
+              </div>
+            ))}
+            <div className="mb-8">&nbsp;</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
