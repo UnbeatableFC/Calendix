@@ -54,7 +54,7 @@ export interface EventType {
   description: string;
   length: number;
   bookingTimes: BookingTimes;
-  _id?: string;
+  _id: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

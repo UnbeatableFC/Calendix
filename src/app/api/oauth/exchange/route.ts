@@ -1,5 +1,7 @@
 import { nylasConfig, nylas } from "@/libs/nylas";
 import { session } from "@/libs/session";
+import { ProfileModel } from "@/models/Profile";
+import { connect } from "mongoose";
 import { NextApiRequest } from "next";
 import { redirect } from "next/navigation";
 
@@ -38,7 +40,16 @@ export async function GET(req: NextApiRequest) {
   );
   const { grantId, email } = response;
 
-  await session().set("grantId", grantId);
+  await connect(process.env.MONGODB_URI as string);
+
+  const profileDoc = await ProfileModel.findOne({ email });
+  if (profileDoc) {
+    profileDoc.grantId = grantId;
+    await profileDoc.save();
+  } else {
+    await ProfileModel.create({ email, grantId });
+  }
+
   await session().set("email", email);
 
   redirect("/");

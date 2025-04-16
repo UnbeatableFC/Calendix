@@ -2,21 +2,27 @@
 import { WeekdayName } from "@/models/EventType";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { weekdaysShortNames, BookingTimes } from "@/libs/shared";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   addDays,
   addMinutes,
   addMonths,
+  endOfDay,
   format,
+  isAfter,
   isBefore,
   isEqual,
   isFuture,
   isLastDayOfMonth,
   isToday,
+  startOfDay,
   subMonths,
 } from "date-fns";
 import clsx from "clsx";
 import Link from "next/link";
+import axios from "axios";
+import { TimeSlot } from "nylas";
+import { HashLoader } from "react-spinners";
 
 const TimePicker = ({
   bookingTimes,
@@ -57,6 +63,52 @@ const TimePicker = ({
     activeCalendarDate.getFullYear()
   );
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [busySlots, setBusySlots] = useState<TimeSlot[]>([]);
+  const [busySlotsLoaded, setBusySlotsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (selectedDay) {
+      setBusySlots([]);
+      setBusySlotsLoaded(false);
+      const params = new URLSearchParams();
+      params.set("username", username);
+      params.set("from", startOfDay(selectedDay).toISOString());
+      params.set("to", endOfDay(selectedDay).toISOString());
+      axios.get(`/api/busy?` + params.toString()).then((res) => {
+        setBusySlots(res.data);
+        setBusySlotsLoaded(true);
+      });
+    }
+  }, [selectedDay]);
+
+  function withinBusySlots(time: Date) {
+    const bookingFrom = time;
+    const bookingTo = addMinutes(new Date(time), length);
+
+    for (const busySlot of busySlots) {
+      const busyFrom = new Date(parseInt(busySlot.startTime) * 1000);
+      const busyTo = new Date(parseInt(busySlot.endTime) * 1000);
+      if (
+        isAfter(bookingTo, busyFrom) &&
+        isBefore(bookingTo, busyTo)
+      ) {
+        return true;
+      }
+      if (
+        isAfter(bookingFrom, busyFrom) &&
+        isBefore(bookingFrom, busyTo)
+      ) {
+        return true;
+      }
+      if (isEqual(bookingFrom, busyFrom)) {
+        return true;
+      }
+      if (isEqual(bookingTo, busyTo)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   const firstDayOfActiveMonth = new Date(
     activeYear,
@@ -103,7 +155,9 @@ const TimePicker = ({
       selectedDayTo.setMinutes(parseInt(minutesTo));
       let a = selectedDayFrom;
       do {
-        bookingHours.push(a);
+        if (!withinBusySlots(a)) {
+          bookingHours.push(a);
+        }
         a = addMinutes(a, 30);
       } while (isBefore(addMinutes(a, length), selectedDayTo));
     }
@@ -181,16 +235,22 @@ const TimePicker = ({
         <div className=" mr-2 pt-8 pb-4 pl-2 pr-4 overflow-y-scroll">
           <p className="">{format(selectedDay, "EEEE, MMMM d")}</p>
           <div className="grid gap-1 mt-2 max-h-56">
-            {bookingHours.map((bookingTime, index) => (
-              <div key={index}>
-                <Link
-                  href={`/${username}/${meetingUri}/${bookingTime.toISOString()}`}
-                  className="w-full block border-2 border-blue-600 rounded-lg text-blue-600 font-semibold cursor-pointer text-sm text-center"
-                >
-                  {format(bookingTime, "HH:mm a")}
-                </Link>
+            {!busySlotsLoaded && (
+              <div className="flex justify-center py-4">
+                <HashLoader size={40} color="#3882f6" />
               </div>
-            ))}
+            )}
+            {busySlotsLoaded &&
+              bookingHours.map((bookingTime, index) => (
+                <div key={index}>
+                  <Link
+                    href={`/${username}/${meetingUri}/${bookingTime.toISOString()}`}
+                    className="w-full block border-2 border-blue-600 rounded-lg text-blue-600 font-semibold cursor-pointer text-sm text-center"
+                  >
+                    {format(bookingTime, "HH:mm a")}
+                  </Link>
+                </div>
+              ))}
             <div className="mb-8">&nbsp;</div>
           </div>
         </div>

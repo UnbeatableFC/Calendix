@@ -23,7 +23,6 @@ export async function PUT(req: NextRequest) {
     }
     return Response.json(true);
   } else {
-    
     return Response.json(false);
   }
 }
