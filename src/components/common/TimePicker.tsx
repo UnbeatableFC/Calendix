@@ -79,7 +79,7 @@ const TimePicker = ({
         setBusySlotsLoaded(true);
       });
     }
-  }, [selectedDay]);
+  }, [selectedDay , username]);
 
   function withinBusySlots(time: Date) {
     const bookingFrom = time;
