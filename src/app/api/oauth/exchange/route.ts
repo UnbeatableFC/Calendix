@@ -2,10 +2,10 @@ import { nylasConfig, nylas } from "@/libs/nylas";
 import { session } from "@/libs/session";
 import { ProfileModel } from "@/models/Profile";
 import { connect } from "mongoose";
-import { NextApiRequest } from "next";
 import { redirect } from "next/navigation";
+import { NextRequest } from "next/server";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
   console.log("Received callback from Nylas");
   if (!req.url) {
     return Response.json("Invalid request URL", { status: 400 });
